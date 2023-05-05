@@ -1,0 +1,13 @@
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+        - .env
+    volumes:
+      - my-unsplash-postgres-db:/var/lib/postgresql/data
+
+volumes:
+  my-unsplash-postgres-db:
