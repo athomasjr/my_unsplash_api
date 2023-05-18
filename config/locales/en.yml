@@ -30,4 +30,14 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  errors:
+    user:
+      blank_username: 'Username cannot be blank'
+      blank_password: 'Password cannot be blank'
+      invalid_credentials: 'Invalid username or password'
+      failed_create: 'Failed to create user'
+    photo:
+      blank_label: 'Label cannot be blank'
+      blank_url: 'URL cannot be blank'
+      invalid_user: 'User does not exist'
+
