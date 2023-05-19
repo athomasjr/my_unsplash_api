@@ -38,6 +38,6 @@ en:
       failed_create: 'Failed to create user'
     photo:
       blank_label: 'Label cannot be blank'
-      blank_url: 'URL cannot be blank'
       invalid_user: 'User does not exist'
+      blank_image: 'Image cannot be blank'
 
