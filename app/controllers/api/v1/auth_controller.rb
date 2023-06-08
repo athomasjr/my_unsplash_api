@@ -19,7 +19,6 @@ module Api
 
         # render json: { error: I18n.t('errors.user.expired_token') }, status: :unauthorized
         nil
-
       end
 
       private

@@ -5,7 +5,6 @@ module Api
     class UsersController < ApplicationController
       skip_before_action :authorized?, only: [:create]
 
-
       def profile
         user = current_user
         render json: user, status: :accepted
@@ -26,8 +25,6 @@ module Api
         photos = current_user.photos
         render json: photos, status: :ok
       end
-
-
 
       private
 

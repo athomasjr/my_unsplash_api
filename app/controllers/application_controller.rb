@@ -18,7 +18,7 @@ class ApplicationController < ActionController::API
   def auth_header
     request.headers['Authorization']
   end
-  
+
   def decoded_token
     return unless auth_header
 
@@ -35,7 +35,6 @@ class ApplicationController < ActionController::API
   end
 
   def user_id
-
     return unless decoded_token
 
     decoded_token.first['user_id']
@@ -54,6 +53,4 @@ class ApplicationController < ActionController::API
   def authorized?(error_key = 'login')
     render_error(error_key, :unauthorized, :user) unless logged_in?
   end
-
-
 end
