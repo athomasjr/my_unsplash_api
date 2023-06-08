@@ -2,21 +2,19 @@
 
 class Photo < ApplicationRecord
   belongs_to :user
-  has_one_attached :image
   validates :label, presence: { message: I18n.t('errors.photo.blank_label') }
   validates :user_id, presence: { message: I18n.t('errors.photo.invalid_user') }
-  validates :validate_image_presence
+  validates :url, presence: { message: I18n.t('errors.photo.invalid_url') }
 
-  before_save :store_cloudinary_url, if: :image_attached?
+  before_save :upload_photo_to_cloudinary, if: :new_record?
+
+  
 
   private
 
-  def store_cloudinary_url
-    self.url = image.service_url
-  end
-
-  def validate_image_presence
-    errors.add(:image, I18n.t('errors.photo.blank_image')) unless image.attached?
+  def upload_photo_to_cloudinary
+    uploaded_photo = PhotoUploader.new(self).upload
+    self['url'] = uploaded_photo['secure_url']
   end
 
 end

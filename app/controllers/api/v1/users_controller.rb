@@ -3,11 +3,12 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      skip_before_action :authorized, only: [:create]
+      skip_before_action :authorized?, only: [:create]
 
 
       def profile
-        render json: { user: UserSerializer.new(current_user) }, status: :accepted
+        user = current_user
+        render json: user, status: :accepted
       end
 
       def create
@@ -15,12 +16,16 @@ module Api
         if @user.valid?
           @user.save
           @token = issue_token(user_id: @user.id)
-          render json: { user: UserSerializer.new(@user), jwt: @token }, status: :created
+          render json: { user: user, jwt: @token }, status: :created
         else
           render json: { error: I18n.t('errors.user.failed_create') }, status: :not_acceptable
         end
       end
 
+      def photos
+        photos = current_user.photos
+        render json: photos, status: :ok
+      end
 
 
 

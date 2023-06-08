@@ -32,12 +32,24 @@
 en:
   errors:
     user:
+      invalid: 'Invalid token'
+      unauthorized: 'Unauthorized'
       blank_username: 'Username cannot be blank'
       blank_password: 'Password cannot be blank'
       invalid_credentials: 'Invalid username or password'
       failed_create: 'Failed to create user'
+      invalid_token: 'Invalid token'
+      login: 'Please log in'
+      expired_token: 'Token has expired'
     photo:
       blank_label: 'Label cannot be blank'
       invalid_user: 'User does not exist'
       blank_image: 'Image cannot be blank'
+      failed_create: 'Failed to upload photo'
+      invalid_url: 'Invalid URL'
+      not_found: 'Photo not found'
+      photo_deleted: 'Photo deleted'
+      failed_delete: 'Failed to delete photo'
+    exception:
+      internal_server_error: "An internal server error occurred. Please try again later or contact the system administrator for assistance."
 
