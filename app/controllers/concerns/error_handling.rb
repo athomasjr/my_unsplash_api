@@ -19,7 +19,6 @@ module ErrorHandling
   end
 
   def render_error(error_key, status, model = nil)
-    binding.pry
     model ||= controller_name.gsub('_controller', '').singularize
     error_message = I18n.t("errors.#{model}.#{error_key}")
     log_error(error_message)
@@ -29,5 +28,4 @@ module ErrorHandling
   def log_error(error_message)
     Rails.logger.error "An error occurred: #{error_message}"
   end
-
 end

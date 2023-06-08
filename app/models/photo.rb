@@ -8,13 +8,16 @@ class Photo < ApplicationRecord
 
   before_save :upload_photo_to_cloudinary, if: :new_record?
 
-  
+  def destroy_photo_and_upload
+    destroy
+    PhotoUploader.destroy(public_id)
+  end
 
   private
 
   def upload_photo_to_cloudinary
     uploaded_photo = PhotoUploader.new(self).upload
     self['url'] = uploaded_photo['secure_url']
+    self['public_id'] = uploaded_photo['public_id']
   end
-
 end

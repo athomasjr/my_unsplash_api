@@ -27,16 +27,13 @@ module Api
 
         return render json: { message: I18n.t('errors.photo.not_found') }, status: :not_found if photo.blank?
 
-
         if photo.present?
-          photo.destroy
+          photo.destroy_photo_and_upload
           render json: { message: I18n.t('errors.photo.photo_deleted') }, status: :ok
         else
           render_error(:failed_delete, :not_acceptable)
         end
       end
-
-
 
       private
 
