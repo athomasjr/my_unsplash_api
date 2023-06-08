@@ -5,11 +5,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.1.2'
 gem 'active_model_serializers', '~> 0.10.2'
+gem 'cloudinary', '~> 1.25'
 gem 'dotenv-rails', groups: %i[development test]
 gem 'jwt', '~> 1.5', '>= 1.5.4'
 gem 'pry-byebug', '~> 3.10', '>= 3.10.1'
 gem 'rubocop-rails', require: false
-gem 'cloudinary', '~> 1.25'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 7.0.4', '>= 7.0.4.2'
