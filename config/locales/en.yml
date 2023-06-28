@@ -41,6 +41,7 @@ en:
       invalid_token: 'Invalid token'
       login: 'Please log in'
       expired_token: 'Token has expired'
+      username_taken: 'Username already exists'
     photo:
       blank_label: 'Label cannot be blank'
       invalid_user: 'User does not exist'

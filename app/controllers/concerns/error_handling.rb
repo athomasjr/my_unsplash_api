@@ -5,17 +5,7 @@ module ErrorHandling
 
   included do
     rescue_from JWT::DecodeError, with: :handle_jwt_decode_error
-    # rescue_from StandardError, with: :handle_error
-  end
-
-  def handle_jwt_decode_error(exception)
-    log_error(exception&.message)
-    render_error(:invalid_token, :unauthorized, :user)
-  end
-
-  def handle_error(exception)
-    log_error(exception.message)
-    render_error(:internal_server_error, :internal_server_error, :exception)
+    rescue_from ActiveRecord::RecordInvalid, with: :handle_validation_error
   end
 
   def render_error(error_key, status, model = nil)
@@ -23,6 +13,23 @@ module ErrorHandling
     error_message = I18n.t("errors.#{model}.#{error_key}")
     log_error(error_message)
     render json: { error: error_message }, status: status
+  end
+
+  private
+
+  def handle_validation_error(exception)
+    log_error(exception.message)
+    render json: { error: exception.message }, status: :unprocessable_entity
+  end
+
+  def handle_error(exception)
+    log_error(exception.message)
+    render_error(:internal_server_error, :internal_server_error, :exception)
+  end
+
+  def handle_jwt_decode_error(exception)
+    log_error(exception&.message)
+    render_error(:invalid_token, :unauthorized, :user)
   end
 
   def log_error(error_message)
