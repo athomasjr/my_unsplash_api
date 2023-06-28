@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::API
   include ErrorHandling
 
+  serialization_scope :current_user
   before_action :authorized?
 
   def jwt_key
@@ -37,7 +38,7 @@ class ApplicationController < ActionController::API
   def user_id
     return unless decoded_token
 
-    decoded_token.first['user_id']
+    decoded_token&.first&.[]('user_id')
   end
 
   def current_user

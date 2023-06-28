@@ -10,14 +10,13 @@ module Api
         # binding.pry
         if @user&.authenticate(user_auth_params[:password])
           token = issue_token(user_id: @user.id)
-          render json: { user: UserSerializer.new(@user), jwt: token }, status: :accepted
+          render json: { user: UserSerializer.new(@user), token: token }, status: :accepted
         else
           render json: { error: I18n.t('errors.user.invalid_credentials') }, status: :unauthorized
         end
 
         return unless decoded_token.nil?
 
-        # render json: { error: I18n.t('errors.user.expired_token') }, status: :unauthorized
         nil
       end
 
