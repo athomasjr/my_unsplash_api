@@ -6,6 +6,7 @@ module ErrorHandling
   included do
     rescue_from JWT::DecodeError, with: :handle_jwt_decode_error
     rescue_from ActiveRecord::RecordInvalid, with: :handle_validation_error
+    rescue_from StandardError, with: :handle_error
   end
 
   def render_error(error_key, status, model = nil)
