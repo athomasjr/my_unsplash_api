@@ -3,12 +3,13 @@
 require 'cloudinary/uploader'
 require 'cloudinary/utils'
 class PhotoUploader
-  ACCEPTED_KINDS = %w[photos avatars].freeze
-  def initialize(photo, user = nil)
-    @photo = photo
-    @user = photo.user if photo.respond_to?(:user)
-    @user ||= user
+  ACCEPTED_KINDS = %w[photo avatar].freeze
+  def initialize(file, user: nil, kind: nil)
+    @file = file
+    @user = user
     @public_id = generate_public_id
+    @kind = kind
+    @upload_folder_path = upload_folder_path
   end
 
   class << self
@@ -18,7 +19,7 @@ class PhotoUploader
   end
 
   def upload_photo
-    upload_to_cloudinary(@photo.url, @public_id, 'photos')
+    upload_to_cloudinary(@file, @public_id)
   end
 
   def upload_user_avatar
@@ -33,9 +34,7 @@ class PhotoUploader
   private
 
   def upload_avatar_to_cloudinary(transformations)
-    upload_to_cloudinary(@photo['url'], @public_id, 'avatars', {
-                           eager: transformations
-                         })
+    upload_to_cloudinary(@file, @public_id, { eager: transformations })
   end
 
   def user_avatar_response(response)
@@ -61,13 +60,17 @@ class PhotoUploader
     Cloudinary::Utils.random_public_id
   end
 
-  def upload_to_cloudinary(photo_url, public_id, kind = nil, options = {})
+  def upload_to_cloudinary(file, public_id, options = {})
     return if @user.blank?
 
-    base_path = "#{ENV.fetch('CLOUDINARY_FOLDER', nil)}/#{@user.id}"
-    base_path += "/#{kind}" if kind.present? && validate_kind!(kind)
-    Cloudinary::Uploader.upload(photo_url, public_id: public_id,
-                                           folder: base_path, **options)
+    Cloudinary::Uploader.upload(file, public_id: public_id,
+                                      folder: @upload_folder_path, **options)
+  end
+
+  def upload_folder_path
+    base_path = "#{ENV.fetch('CLOUDINARY_FOLDER', nil)}/#{@user&.id}"
+    base_path += "/#{@kind}" if @kind.present? && validate_kind!(@kind)
+    base_path
   end
 
   def validate_kind!(kind)

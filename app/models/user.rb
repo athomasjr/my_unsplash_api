@@ -10,10 +10,15 @@ class User < ApplicationRecord
   validate :validate_unique_username!, on: :create
   validates :password_digest, presence: { message: I18n.t('errors.user.blank_password') }
 
-  before_save :upload_avatar_to_cloudinary, if: -> { avatar.present? }
-  before_save :save_avatar_data, if: -> { avatar.present? }
+  def upload_and_save_avatar_data(avatar)
+    uploaded_avatar = upload_avatar_to_cloudinary(avatar)
+    avatar_object = format_avatar_data(uploaded_avatar)
+    update_user_avatar!(avatar_object)
+  end
 
-
+  def update_user_avatar!(updated_avatar)
+    update!(avatar: updated_avatar)
+  end
 
   private
 
@@ -25,16 +30,16 @@ class User < ApplicationRecord
     raise ActiveRecord::RecordInvalid.new(self), I18n.t('errors.user.username_taken')
   end
 
-  def upload_avatar_to_cloudinary
-    @uploaded_avatar = PhotoUploader.new(avatar, self).upload_user_avatar
+  def upload_avatar_to_cloudinary(avatar)
+    PhotoUploader.new(avatar, user: self, kind: 'avatar').upload_user_avatar
   end
 
-  def save_avatar_data
-    self.avatar = {
-      public_id: @uploaded_avatar[:public_id],
-      thumbnail: @uploaded_avatar[:transformations][:thumbnail]['url'],
-      medium: @uploaded_avatar[:transformations][:medium]['url'],
-      large: @uploaded_avatar[:transformations][:large]['url']
+  def format_avatar_data(uploaded_avatar)
+    {
+      public_id: uploaded_avatar[:public_id],
+      thumbnail: uploaded_avatar[:transformations][:thumbnail]['url'],
+      medium: uploaded_avatar[:transformations][:medium]['url'],
+      large: uploaded_avatar[:transformations][:large]['url']
     }
   end
 end

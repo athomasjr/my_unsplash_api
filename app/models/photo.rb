@@ -16,8 +16,8 @@ class Photo < ApplicationRecord
   private
 
   def upload_photo_to_cloudinary
-    uploaded_photo = PhotoUploader.new(self).upload_photo
-    self['url'] = uploaded_photo['secure_url']
-    self['public_id'] = uploaded_photo['public_id']
+    uploaded_photo = PhotoUploader.new(url, user: user, kind: 'photos').upload_photo
+    self.url = uploaded_photo['secure_url']
+    self.public_id = uploaded_photo['public_id']
   end
 end
