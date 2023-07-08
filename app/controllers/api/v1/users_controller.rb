@@ -10,49 +10,58 @@ module Api
       end
 
       def create
-        fetch_new_user_data
-        user = User.new(@create_user_params)
+        user = User.new(create_params)
 
         if user.valid?
           user.save
 
-          user.upload_and_save_avatar_data(@user_avatar_params) if @avatar_file.a_uploaded_file?
-
           token = issue_token(user_id: user.id)
           render json: { user: UserSerializer.new(user), token: token }, status: :created
         else
-          render json: { error: I18n.t('errors.user.failed_create') }, status: :not_acceptable
+          render_error(:failed_create, :unprocessable_entity)
         end
+      end
+
+      def update
+        input = update_params
+
+        update_avatar(input[:avatar])
+
+        if current_user.update(input.except(:avatar))
+          render json: current_user, status: :ok
+        else
+          render_error(:failed_update, :unprocessable_entity)
+        end
+
       end
 
       def photos
         render json: current_user.photos, status: :ok
       end
 
-      private
+      def update_avatar(avatar_input)
+        return unless avatar_input
 
-      def fetch_new_user_data
-        @create_user_params = user_params
-        @user_avatar_params = create_params[:avatar]
-        @avatar_file = FileUtil.new(@user_avatar_params)
+        avatar_data = handle_avatar_data(avatar_input)
+        current_user.upload_and_save_avatar_data(avatar_data)
       end
 
-      def user_avatar_data(user_data)
-        file = FileUtil.new(user_data[:avatar])
-        return unless file.a_uploaded_file?
+      def handle_avatar_data(avatar_input)
+        file = FileUtil.new(avatar_input)
+        return avatar_input unless file.a_uploaded_file?
 
-        user_data[:avatar] = file.convert_file_to_data_uri
-      end
-
-      def user_params
-        create_params.except(:avatar)
+        file.convert_file_to_data_uri
       end
 
       def create_params
-        params.require(:user).permit(:username, :password, :avatar).tap do |user_params|
+        params.require(:user).permit(:username, :password).tap do |user_params|
           user_params.require(:username)
           user_params.require(:password)
         end
+      end
+
+      def update_params
+        params.require(:user).permit(:username, :avatar)
       end
     end
   end

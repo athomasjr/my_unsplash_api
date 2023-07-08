@@ -5,7 +5,7 @@ require 'cloudinary/utils'
 class PhotoUploader
   ACCEPTED_KINDS = %w[photo avatar].freeze
   def initialize(file, user: nil, kind: nil)
-    @file = file
+    @file = format_file(file)
     @user = user
     @public_id = generate_public_id
     @kind = kind
@@ -71,6 +71,13 @@ class PhotoUploader
     base_path = "#{ENV.fetch('CLOUDINARY_FOLDER', nil)}/#{@user&.id}"
     base_path += "/#{@kind}" if @kind.present? && validate_kind!(@kind)
     base_path
+  end
+
+  def format_file(file)
+    return file if file.is_a?(String)
+
+    uploaded_file = FileUtil.new(file)
+    uploaded_file.convert_file_to_data_uri if uploaded_file.a_uploaded_file?
   end
 
   def validate_kind!(kind)

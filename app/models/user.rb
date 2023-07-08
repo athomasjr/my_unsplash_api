@@ -11,12 +11,13 @@ class User < ApplicationRecord
   validates :password_digest, presence: { message: I18n.t('errors.user.blank_password') }
 
   def upload_and_save_avatar_data(avatar)
-    uploaded_avatar = upload_avatar_to_cloudinary(avatar)
+    uploaded_avatar = upload_avatar(avatar)
     avatar_object = format_avatar_data(uploaded_avatar)
-    update_user_avatar!(avatar_object)
+    update_avatar!(avatar_object)
   end
 
-  def update_user_avatar!(updated_avatar)
+  def update_avatar!(updated_avatar)
+    PhotoUploader.destroy(avatar['public_id']) if avatar.present?
     update!(avatar: updated_avatar)
   end
 
@@ -30,7 +31,7 @@ class User < ApplicationRecord
     raise ActiveRecord::RecordInvalid.new(self), I18n.t('errors.user.username_taken')
   end
 
-  def upload_avatar_to_cloudinary(avatar)
+  def upload_avatar(avatar)
     PhotoUploader.new(avatar, user: self, kind: 'avatar').upload_user_avatar
   end
 
