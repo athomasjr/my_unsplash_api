@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require 'cloudinary'
-# require 'cloudinary/uploader'
-# require 'cloudinary/utils'
+
 
 
 

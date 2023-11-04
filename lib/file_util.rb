@@ -19,7 +19,6 @@ class FileUtil
 
   private
 
-
   def read_file
     File.read(@file.tempfile)
   end
@@ -31,5 +30,4 @@ class FileUtil
   def base64_data_uri(base64_data)
     "data:#{@file.content_type};base64,#{base64_data}"
   end
-
 end

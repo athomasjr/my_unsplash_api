@@ -23,7 +23,6 @@ class PhotoUploader
   end
 
   def upload_user_avatar
-
     return if @user.blank?
 
     transformations = user_avatar_transformations
