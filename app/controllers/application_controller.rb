@@ -12,14 +12,12 @@ class ApplicationController < ActionController::API
   end
 
   def issue_token(payload)
-    # binding.pry
     expiration_time = Time.now.to_i + 3600
     payload[:exp] = expiration_time
     JWT.encode(payload, jwt_key)
   end
 
   def decoded_token
-    # binding.pry
     return unless auth_header
 
     token = auth_header.split[1]
