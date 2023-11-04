@@ -7,7 +7,6 @@ module Api
 
       def login
         @user = User.find_by(username: user_auth_params[:username])
-        # binding.pry
         if @user&.authenticate(user_auth_params[:password])
           token = issue_token(user_id: @user.id)
           render json: { user: UserSerializer.new(@user), token: token }, status: :accepted

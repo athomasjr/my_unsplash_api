@@ -6,7 +6,7 @@ module Api
       skip_before_action :authorized?, only: [:create]
 
       def profile
-        render json: current_user, status: :accepted
+        render json: { user: UserSerializer.new(current_user) }, status: :accepted
       end
 
       def create
@@ -16,7 +16,8 @@ module Api
           user.save
 
           token = issue_token(user_id: user.id)
-          render json: { user: UserSerializer.new(user), token: token }, status: :created
+          render json: { user: UserSerializer.new(user, context: { create_action: true }), token: token },
+                 status: :created
         else
           render_error(:failed_create, :unprocessable_entity)
         end
@@ -32,12 +33,13 @@ module Api
         else
           render_error(:failed_update, :unprocessable_entity)
         end
-
       end
 
       def photos
         render json: current_user.photos, status: :ok
       end
+
+      private
 
       def update_avatar(avatar_input)
         return unless avatar_input

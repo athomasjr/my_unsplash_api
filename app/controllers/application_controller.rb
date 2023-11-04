@@ -3,23 +3,23 @@
 class ApplicationController < ActionController::API
   include ErrorHandling
 
-  serialization_scope :current_user
   before_action :authorized?
-
 
   def current_user
     return unless user_id
 
-    @current_user ||= User.find(user_id)
+    @current_user ||= Api::V1::User.find(user_id)
   end
 
   def issue_token(payload)
+    # binding.pry
     expiration_time = Time.now.to_i + 3600
     payload[:exp] = expiration_time
     JWT.encode(payload, jwt_key)
   end
 
   def decoded_token
+    # binding.pry
     return unless auth_header
 
     token = auth_header.split[1]
@@ -57,6 +57,4 @@ class ApplicationController < ActionController::API
   def logged_in?
     current_user.present?
   end
-
-
 end
